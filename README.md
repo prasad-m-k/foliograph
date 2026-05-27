@@ -10,6 +10,45 @@ Instead of loading entire documents into every session, you build the graph once
 
 ---
 
+## Get started in 3 steps (claude.ai)
+
+No terminal. No installation. Works entirely in your browser.
+
+**Step 1: Download SKILL.md**
+
+Download `SKILL.md` from this repository (click the file, then the download button).
+
+**Step 2: Add it to your Claude Project**
+
+1. Go to [claude.ai](https://claude.ai) and open or create a Project
+2. Click the project name at the top of the left sidebar
+3. Click **Add content** (or the **+** icon next to Files)
+4. Upload `SKILL.md`
+5. That is it. The skill is now active for every conversation in this Project.
+
+**Step 3: Use it**
+
+Upload any `.docx`, `.pdf`, `.pptx`, `.md`, or `.txt` file into a conversation
+and say:
+
+```
+foliograph this
+```
+
+You will get `FOLIO_TIPS.md` with your document map, key concepts, token savings,
+and ready-made commands. Ask for a visual dashboard with:
+
+```
+Show me an executive dashboard
+```
+
+**What you need:**
+- A claude.ai account (Free, Pro, or Team)
+- A Project (available on all plans)
+- The `SKILL.md` file from this repo
+
+---
+
 ## The Problem
 
 Every new LLM session on a large document project starts blind. You paste the whole chapter, the whole spec, the whole report, because you don't know what the model will need. By message three you've burned most of your context window on content the model never touched.
