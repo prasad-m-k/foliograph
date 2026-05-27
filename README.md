@@ -16,7 +16,7 @@ No terminal. No installation. Works entirely in your browser.
 
 **Step 1: Download SKILL.md**
 
-Download `SKILL.md` from this repository (click the file, then the download button).
+Download [`SKILL.md`](https://github.com/prasad-m-k/foliograph/blob/main/SKILL.md) from this repository, then click the **Raw** button and save the file.
 
 **Step 2: Add it to your Claude Project**
 
