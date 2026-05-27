@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "foliograph"
+version = "0.1.0"
+description = "Pre-compile office documents into compact knowledge graphs for LLM sessions"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.9"
+keywords = ["llm", "rag", "documents", "knowledge-graph", "token-optimization"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Text Processing :: Markup",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = []
+
+[project.optional-dependencies]
+docx = ["python-docx>=1.1"]
+pdf  = ["pdfminer.six>=20221105"]
+pptx = ["python-pptx>=0.6.23"]
+all  = ["python-docx>=1.1", "pdfminer.six>=20221105", "python-pptx>=0.6.23"]
+dev  = [
+    "pytest>=7",
+    "python-docx>=1.1",
+    "pdfminer.six>=20221105",
+    "python-pptx>=0.6.23",
+]
+
+[project.scripts]
+foliograph = "foliograph.cli:main"
+
+[project.urls]
+Homepage   = "https://github.com/prasad-m-k/foliograph"
+Repository = "https://github.com/prasad-m-k/foliograph"
+Issues     = "https://github.com/prasad-m-k/foliograph/issues"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["foliograph*"]

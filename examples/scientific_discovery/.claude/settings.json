@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cat FOLIO_GRAPH.md 2>/dev/null | head -80 || echo 'No FOLIO_GRAPH.md found. Run: foliograph build <sources>'"
+          }
+        ]
+      }
+    ]
+  }
+}

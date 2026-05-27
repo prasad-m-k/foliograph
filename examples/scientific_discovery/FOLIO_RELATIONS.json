@@ -1,0 +1,98 @@
+[
+  {
+    "kind": "SEQUENCE",
+    "source_file": "ScientificDiscovery.pptx",
+    "source_section": "Slide 1",
+    "target_file": "ScientificDiscovery.pptx",
+    "target_section": "Slide 2",
+    "label": "Slide sequence: Slide 1 -> Slide 2"
+  },
+  {
+    "kind": "SEQUENCE",
+    "source_file": "ScientificDiscovery.pptx",
+    "source_section": "Slide 2",
+    "target_file": "ScientificDiscovery.pptx",
+    "target_section": "Slide 3",
+    "label": "Slide sequence: Slide 2 -> Slide 3"
+  },
+  {
+    "kind": "SEQUENCE",
+    "source_file": "ScientificDiscovery.pptx",
+    "source_section": "Slide 3",
+    "target_file": "ScientificDiscovery.pptx",
+    "target_section": "Slide 4",
+    "label": "Slide sequence: Slide 3 -> Slide 4"
+  },
+  {
+    "kind": "SEQUENCE",
+    "source_file": "ScientificDiscovery.pptx",
+    "source_section": "Slide 4",
+    "target_file": "ScientificDiscovery.pptx",
+    "target_section": "Slide 5",
+    "label": "Slide sequence: Slide 4 -> Slide 5"
+  },
+  {
+    "kind": "SEQUENCE",
+    "source_file": "ScientificDiscovery.pptx",
+    "source_section": "Slide 5",
+    "target_file": "ScientificDiscovery.pptx",
+    "target_section": "Slide 6",
+    "label": "Slide sequence: Slide 5 -> Slide 6"
+  },
+  {
+    "kind": "SEQUENCE",
+    "source_file": "ScientificDiscovery.pptx",
+    "source_section": "Slide 6",
+    "target_file": "ScientificDiscovery.pptx",
+    "target_section": "Slide 7",
+    "label": "Slide sequence: Slide 6 -> Slide 7"
+  },
+  {
+    "kind": "SEQUENCE",
+    "source_file": "ScientificDiscovery.pptx",
+    "source_section": "Slide 7",
+    "target_file": "ScientificDiscovery.pptx",
+    "target_section": "Slide 8",
+    "label": "Slide sequence: Slide 7 -> Slide 8"
+  },
+  {
+    "kind": "SEQUENCE",
+    "source_file": "ScientificDiscovery.pptx",
+    "source_section": "Slide 8",
+    "target_file": "ScientificDiscovery.pptx",
+    "target_section": "Slide 9",
+    "label": "Slide sequence: Slide 8 -> Slide 9"
+  },
+  {
+    "kind": "SEQUENCE",
+    "source_file": "ScientificDiscovery.pptx",
+    "source_section": "Slide 9",
+    "target_file": "ScientificDiscovery.pptx",
+    "target_section": "Slide 10",
+    "label": "Slide sequence: Slide 9 -> Slide 10"
+  },
+  {
+    "kind": "SEQUENCE",
+    "source_file": "ScientificDiscovery.pptx",
+    "source_section": "Slide 10",
+    "target_file": "ScientificDiscovery.pptx",
+    "target_section": "Slide 11",
+    "label": "Slide sequence: Slide 10 -> Slide 11"
+  },
+  {
+    "kind": "SEQUENCE",
+    "source_file": "ScientificDiscovery.pptx",
+    "source_section": "Slide 11",
+    "target_file": "ScientificDiscovery.pptx",
+    "target_section": "Slide 12",
+    "label": "Slide sequence: Slide 11 -> Slide 12"
+  },
+  {
+    "kind": "SEQUENCE",
+    "source_file": "ScientificDiscovery.pptx",
+    "source_section": "Slide 12",
+    "target_file": "ScientificDiscovery.pptx",
+    "target_section": "Slide 13",
+    "label": "Slide sequence: Slide 12 -> Slide 13"
+  }
+]

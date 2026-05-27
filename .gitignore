@@ -1,0 +1,35 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.venv/
+venv/
+env/
+.env
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Foliograph outputs (don't commit generated graphs — they're derived files)
+FOLIO_GRAPH.md
+FOLIO_INDEX.md
+FOLIO_SESSION.md
+
+# But DO commit the example outputs
+!examples/**/FOLIO_GRAPH.md
+!examples/**/FOLIO_INDEX.md
+!examples/**/FOLIO_SESSION.md
