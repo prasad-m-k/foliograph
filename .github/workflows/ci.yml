@@ -30,8 +30,11 @@ jobs:
 
       - name: Smoke test CLI
         run: |
-          foliograph build examples/escalation_intelligence/escalation_intelligence.md \
+          foliograph build examples/sample/sample.md \
             --output /tmp/fg_test/ \
-            --name "CI Smoke Test"
+            --name "CI Smoke Test" \
+            --no-drift \
+            --no-hooks
           test -f /tmp/fg_test/FOLIO_GRAPH.md
           test -f /tmp/fg_test/FOLIO_INDEX.md
+          test -f /tmp/fg_test/FOLIO_SESSION.md
