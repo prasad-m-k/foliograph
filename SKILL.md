@@ -100,201 +100,112 @@ for pkg in ["python-docx", "python-pptx", "pdfminer.six"]:
 
 ---
 
-## Extractors
+## Extractors and entity extraction
 
-### .pptx
 ```python
 from pptx import Presentation
+import docx as dx
+from pdfminer.high_level import extract_text as pdf_extract
+
+def _sec(lvl, ttl, body, hint=None):
+    text = " ".join(body).strip() if isinstance(body, list) else body
+    first = re.split(r"[.!?]", text)[0][:160] if text else ""
+    return {"level": lvl, "title": ttl, "summary": first,
+            "word_count": len(text.split()), "page_hint": hint}
+
+def _rec(path, ftype, title, words, pages, sections, tables, raw):
+    return {"filename": os.path.basename(path), "file_type": ftype,
+            "title": title, "total_words": words, "total_pages": pages,
+            "sections": sections, "tables": tables, "figures": [],
+            "raw_text": raw}
 
 def extract_pptx(path):
     prs = Presentation(path)
-    sections, all_text = [], []
+    secs, all_text = [], []
     for i, slide in enumerate(prs.slides, 1):
-        texts = []
-        for shape in slide.shapes:
-            if shape.has_text_frame:
-                for para in shape.text_frame.paragraphs:
-                    t = para.text.strip()
-                    if t:
-                        texts.append(t)
-        if texts:
-            title = texts[0]
-            body  = " ".join(texts[1:])
-            summary = body[:160] + ("..." if len(body) > 160 else "")
-            sections.append({
-                "level": 1, "title": title, "summary": summary,
-                "word_count": len(body.split()), "page_hint": f"slide {i}"
-            })
-            all_text.extend(texts)
-    return {
-        "filename": os.path.basename(path), "file_type": "PPTX",
-        "title": sections[0]["title"] if sections else os.path.basename(path),
-        "total_words": len(" ".join(all_text).split()),
-        "total_pages": len(prs.slides), "sections": sections,
-        "tables": [], "figures": [], "raw_text": "\n".join(all_text)
-    }
-```
-
-### .docx
-```python
-import docx as dx
+        txts = [t for shape in slide.shapes if shape.has_text_frame
+                for p in shape.text_frame.paragraphs
+                for t in [p.text.strip()] if t]
+        if txts:
+            body = " ".join(txts[1:])
+            secs.append(_sec(1, txts[0], body, f"slide {i}"))
+            all_text.extend(txts)
+    raw = "\n".join(all_text)
+    return _rec(path, "PPTX", secs[0]["title"] if secs else path,
+                len(raw.split()), len(prs.slides), secs, [], raw)
 
 def extract_docx(path):
     doc = dx.Document(path)
-    sections, body, heading, all_text = [], [], None, []
-
-    def flush(h, b):
-        text = " ".join(b).strip()
-        lvl, ttl = h if h else (0, "(preamble)")
-        first = re.split(r'[.!?]', text)[0][:160] if text else ""
-        sections.append({
-            "level": lvl, "title": ttl, "summary": first,
-            "word_count": len(text.split()), "page_hint": None
-        })
-
+    secs, body, hdg, all_text = [], [], None, []
+    def flush():
+        secs.append(_sec(*(hdg if hdg else (0, "(preamble)")), body))
     for p in doc.paragraphs:
         t = p.text.strip()
-        if not t:
-            continue
+        if not t: continue
         all_text.append(t)
-        m = re.match(r'Heading (\d)', p.style.name if p.style else "")
-        if m:
-            flush(heading, body)
-            heading = (int(m.group(1)), t)
-            body = []
-        else:
-            body.append(t)
-    flush(heading, body)
-
-    tables = []
-    for tbl in doc.tables:
-        if tbl.rows:
-            h = " | ".join(c.text.strip() for c in tbl.rows[0].cells)
-            if h.strip():
-                tables.append(h[:120])
-
-    return {
-        "filename": os.path.basename(path), "file_type": "DOCX",
-        "title": next((s["title"] for s in sections if s["level"] == 1),
-                      os.path.basename(path)),
-        "total_words": len(" ".join(all_text).split()),
-        "total_pages": None, "sections": sections,
-        "tables": tables[:20], "figures": [], "raw_text": "\n".join(all_text)
-    }
-```
-
-### .pdf
-```python
-from pdfminer.high_level import extract_text as pdf_extract
+        m = re.match(r"Heading (\d)", p.style.name if p.style else "")
+        if m: flush(); hdg = (int(m.group(1)), t); body = []
+        else: body.append(t)
+    flush()
+    tables = [" | ".join(c.text.strip() for c in tbl.rows[0].cells)[:120]
+              for tbl in doc.tables if tbl.rows][:20]
+    raw = "\n".join(all_text)
+    title = next((s["title"] for s in secs if s["level"] == 1),
+                 os.path.basename(path))
+    return _rec(path, "DOCX", title, len(raw.split()), None, secs, tables, raw)
 
 def extract_pdf(path):
     raw = pdf_extract(path) or ""
-
-    def is_heading(line):
-        line = line.strip()
-        if not line or len(line) > 120: return False
-        if re.match(r'^(Chapter|Section|CHAPTER|SECTION|\d+\.)\s', line): return True
-        if re.match(r'^#{1,4}\s', line): return True
-        if len(line) < 80 and line == line.title() and not line.endswith('.'): return True
-        return False
-
-    sections, body, heading = [], [], None
-
-    def flush(h, b):
-        text = " ".join(b).strip()
-        lvl, ttl = h if h else (0, "(preamble)")
-        first = re.split(r'[.!?]', text)[0][:160] if text else ""
-        sections.append({
-            "level": lvl, "title": ttl, "summary": first,
-            "word_count": len(text.split()), "page_hint": None
-        })
-
+    def is_h(l):
+        l = l.strip()
+        return bool(l and len(l) < 120 and (
+            re.match(r"^(Chapter|Section|CHAPTER|SECTION|\d+\.)\s", l) or
+            re.match(r"^#{1,4}\s", l) or
+            (len(l) < 80 and l == l.title() and not l.endswith("."))))
+    secs, body, hdg = [], [], None
+    def flush():
+        secs.append(_sec(*(hdg if hdg else (0, "(preamble)")), body))
     for line in raw.splitlines():
-        if is_heading(line):
-            flush(heading, body)
-            heading = (1, line.strip())
-            body = []
-        else:
-            body.append(line)
-    flush(heading, body)
+        if is_h(line): flush(); hdg = (1, line.strip()); body = []
+        else: body.append(line)
+    flush()
+    return _rec(path, "PDF", secs[0]["title"] if secs else path,
+                len(raw.split()), None, secs, [], raw)
 
-    return {
-        "filename": os.path.basename(path), "file_type": "PDF",
-        "title": sections[0]["title"] if sections else os.path.basename(path),
-        "total_words": len(raw.split()), "total_pages": None,
-        "sections": sections, "tables": [], "figures": [], "raw_text": raw
-    }
-```
-
-### .md / .txt
-```python
 def extract_md(path):
     raw = open(path, encoding="utf-8", errors="replace").read()
-    sections, body, heading = [], [], None
-
-    def flush(h, b):
-        text = " ".join(b).strip()
-        lvl, ttl = h if h else (0, "(preamble)")
-        first = re.split(r'[.!?]', text)[0][:160] if text else ""
-        sections.append({
-            "level": lvl, "title": ttl, "summary": first,
-            "word_count": len(text.split()), "page_hint": None
-        })
-
+    secs, body, hdg = [], [], None
+    def flush():
+        secs.append(_sec(*(hdg if hdg else (0, "(preamble)")), body))
     for line in raw.splitlines():
-        m = re.match(r'^(#{1,4})\s+(.+)', line)
-        if m:
-            flush(heading, body)
-            heading = (len(m.group(1)), m.group(2).strip())
-            body = []
-        else:
-            body.append(line)
-    flush(heading, body)
+        m = re.match(r"^(#{1,4})\s+(.+)", line)
+        if m: flush(); hdg = (len(m.group(1)), m.group(2).strip()); body = []
+        else: body.append(line)
+    flush()
+    ext = os.path.splitext(path)[1].upper().lstrip(".")
+    return _rec(path, ext, secs[0]["title"] if secs else path,
+                len(raw.split()), None, secs, [], raw)
 
-    return {
-        "filename": os.path.basename(path),
-        "file_type": os.path.splitext(path)[1].upper().lstrip("."),
-        "title": sections[0]["title"] if sections else os.path.basename(path),
-        "total_words": len(raw.split()), "total_pages": None,
-        "sections": sections, "tables": [], "figures": [], "raw_text": raw
-    }
+EXTRACTORS = {".docx": extract_docx, ".pptx": extract_pptx,
+              ".pdf": extract_pdf, ".md": extract_md, ".txt": extract_md}
 
-EXTRACTORS = {
-    ".docx": extract_docx, ".pptx": extract_pptx,
-    ".pdf": extract_pdf, ".md": extract_md, ".txt": extract_md
-}
-```
-
----
-
-## Named entity extraction
-
-```python
 def extract_entities(text):
-    text = re.sub(r'\s+', ' ', text)
-    entities = set()
-    for m in re.finditer(r'\b([A-Z]{2,6})\b', text):
-        entities.add(m.group(1))
+    text = re.sub(r"\s+", " ", text)
+    ents = set()
+    for m in re.finditer(r"\b([A-Z]{2,6})\b", text):
+        ents.add(m.group(1))
     for m in re.finditer(
-        r'\b((?:[A-Z][a-z]+ ){1,4}(?:Model|Framework|System|Method|'
-        r'Score|Rate|Loop|Matrix|Protocol|Index|Threshold|Spectrum))\b', text):
-        entities.add(m.group(1).strip())
-    for m in re.finditer(r'\b((?:[A-Z][a-z]+\s){1,3}[A-Z][a-z]+)\b', text):
-        phrase = m.group(1).strip()
-        if 2 <= len(phrase.split()) <= 4:
-            entities.add(phrase)
-    stopwords = {
-        "The Book", "This Chapter", "In Practice", "For Example",
-        "As A", "In My", "At The", "Of The"
-    }
-    return sorted(
-        e for e in entities
-        if e not in stopwords and "|" not in e
-        and not re.match(r'^\d', e) and len(e) > 2
-    )[:40]
+        r"\b((?:[A-Z][a-z]+ ){1,4}(?:Model|Framework|System|Method|"
+        r"Score|Rate|Loop|Matrix|Protocol|Index|Threshold|Spectrum))\b", text):
+        ents.add(m.group(1).strip())
+    for m in re.finditer(r"\b((?:[A-Z][a-z]+\s){1,3}[A-Z][a-z]+)\b", text):
+        p = m.group(1).strip()
+        if 2 <= len(p.split()) <= 4: ents.add(p)
+    stops = {"The Book", "This Chapter", "In Practice", "For Example",
+             "As A", "In My", "At The", "Of The"}
+    return sorted(e for e in ents if e not in stops and "|" not in e
+                  and not re.match(r"^\d", e) and len(e) > 2)[:40]
 ```
-
----
 
 ## Graphify-parity analysis
 
