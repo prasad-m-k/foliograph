@@ -51,6 +51,7 @@ Show me an executive dashboard
 
 See Foliograph in action: [Watch the Demo Video](https://youtu.be/znLqYoU8hWo)
 
+---
 
 ## The Problem
 
