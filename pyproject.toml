@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "foliograph"
-version = "0.3.0"
+version = "0.4.0"
 description = "Pre-compile office documents into compact knowledge graphs for LLM sessions"
 readme = "README.md"
 license = { text = "MIT" }

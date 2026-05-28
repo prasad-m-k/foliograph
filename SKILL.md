@@ -186,8 +186,63 @@ def extract_md(path):
     return _rec(path, ext, secs[0]["title"] if secs else path,
                 len(raw.split()), None, secs, [], raw)
 
+def extract_xml(path):
+    """Extract from .xml including Office Open XML content files."""
+    import xml.etree.ElementTree as ET
+    raw_bytes = open(path, "rb").read()
+    raw = raw_bytes.decode("utf-8", errors="replace")
+    W = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+    is_ooxml = "openxmlformats.org" in raw[:2000] or "schemas.microsoft.com" in raw[:2000]
+    try:
+        root = ET.fromstring(raw.encode("utf-8"))
+    except ET.ParseError:
+        raw = re.sub(r"<[^>]+>", " ", raw)
+        return extract_md.__wrapped__(path) if hasattr(extract_md, "__wrapped__") else                {"filename": os.path.basename(path), "file_type": "XML",
+                "title": os.path.basename(path), "total_words": len(raw.split()),
+                "total_pages": None, "sections": [], "tables": [], "figures": [],
+                "raw_text": re.sub(r"\s+", " ", raw).strip()}
+    all_text, sections, body, heading = [], [], [], None
+    def flush():
+        text = " ".join(body).strip()
+        if heading or text:
+            lvl, ttl = heading if heading else (0, "(preamble)")
+            first = re.split(r"[.!?]", text)[0][:160] if text else ""
+            sections.append({"level": lvl, "title": ttl, "summary": first,
+                              "word_count": len(text.split()), "page_hint": None})
+    if is_ooxml:
+        paras = list(root.iter(f"{{{W}}}p"))
+        for para in paras:
+            style_elem = para.find(f".//{{{W}}}pStyle")
+            style_val = (style_elem.get(f"{{{W}}}val","") if style_elem is not None else "")
+            hm = re.match(r"[Hh]eading\s*(\d)", style_val)
+            lvl = int(hm.group(1)) if hm else 0
+            runs = ["".join(t.text or "" for t in para.iter(f"{{{W}}}t"))]
+            para_text = "".join(runs).strip()
+            if para_text:
+                all_text.append(para_text)
+                if lvl > 0:
+                    flush(); heading_box = [lvl, para_text]; body.clear()
+                    heading = tuple(heading_box)
+                else:
+                    body.append(para_text)
+    else:
+        for elem in root.iter():
+            t = (elem.text or "").strip()
+            if t: all_text.append(t); body.append(t)
+    flush()
+    raw_out = " ".join(all_text)
+    return {"filename": os.path.basename(path), "file_type": "XML",
+            "title": sections[0]["title"] if sections and sections[0]["level"] > 0
+                     else os.path.basename(path),
+            "total_words": len(raw_out.split()), "total_pages": None,
+            "sections": sections or [{"level":0,"title":"(content)",
+                "summary": raw_out[:160], "word_count": len(raw_out.split()),
+                "page_hint": None}],
+            "tables": [], "figures": [], "raw_text": raw_out}
+
 EXTRACTORS = {".docx": extract_docx, ".pptx": extract_pptx,
-              ".pdf": extract_pdf, ".md": extract_md, ".txt": extract_md}
+              ".pdf": extract_pdf, ".md": extract_md, ".txt": extract_md,
+              ".xml": extract_xml}
 
 def extract_entities(text):
     text = re.sub(r"\s+", " ", text)
@@ -663,7 +718,7 @@ upload_dir = "/mnt/user-data/uploads"
 output_dir = "/mnt/user-data/outputs"
 os.makedirs(output_dir, exist_ok=True)
 
-SUPPORTED = {".docx", ".pdf", ".pptx", ".md", ".txt"}
+SUPPORTED = {".docx", ".pdf", ".pptx", ".md", ".txt", ".xml"}
 
 uploaded = sorted([
     f for f in os.listdir(upload_dir)
@@ -757,6 +812,7 @@ Internal only (never presented as downloads unless explicitly asked):
 | PowerPoint | .pptx |
 | Markdown | .md |
 | Plain Text | .txt |
+| XML | .xml |
 
 ---
 

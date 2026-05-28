@@ -181,3 +181,61 @@ class TestBuilder:
     def test_empty_sources_raises(self, tmp_path):
         with pytest.raises(ValueError):
             build(sources=[], output_dir=tmp_path)
+
+
+class TestXmlExtractor:
+    def test_generic_xml(self, tmp_path):
+        xml = tmp_path / "doc.xml"
+        xml.write_text("""<?xml version="1.0"?>
+<document>
+  <title>Test Document</title>
+  <section>
+    <heading>Introduction</heading>
+    <para>This is the first paragraph of the document.</para>
+  </section>
+  <section>
+    <heading>Conclusion</heading>
+    <para>This is the conclusion section content.</para>
+  </section>
+</document>""")
+        rec = extract(xml)
+        assert rec.file_type == "xml"
+        assert rec.total_words > 0
+
+    def test_ooxml_wordprocessing(self, tmp_path):
+        xml = tmp_path / "document.xml"
+        xml.write_text("""<?xml version="1.0" encoding="UTF-8"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:body>
+    <w:p>
+      <w:pPr><w:pStyle w:val="Heading1"/></w:pPr>
+      <w:r><w:t>Chapter One</w:t></w:r>
+    </w:p>
+    <w:p>
+      <w:r><w:t xml:space="preserve">This is the body text of chapter one.</w:t></w:r>
+    </w:p>
+    <w:p>
+      <w:pPr><w:pStyle w:val="Heading2"/></w:pPr>
+      <w:r><w:t>A Subsection</w:t></w:r>
+    </w:p>
+    <w:p>
+      <w:r><w:t>Subsection body text here.</w:t></w:r>
+    </w:p>
+  </w:body>
+</w:document>""")
+        rec = extract(xml)
+        assert rec.file_type == "xml"
+        assert rec.total_words > 0
+        titled = [s for s in rec.sections if s.level > 0]
+        assert len(titled) >= 2
+
+    def test_xml_in_supported(self):
+        from foliograph.extractor import SUPPORTED
+        assert ".xml" in SUPPORTED
+
+    def test_malformed_xml_fallback(self, tmp_path):
+        xml = tmp_path / "broken.xml"
+        xml.write_text("<root><unclosed>Some text content here</root>")
+        rec = extract(xml)
+        assert rec.file_type == "xml"
+        assert rec.total_words > 0

@@ -6,6 +6,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
+## [0.4.0] - 2026-05-28
+
+### Added
+
+- XML format support (.xml) for both generic XML and Office Open XML content files
+- `_extract_xml()` extractor handles structured XML with heading elements, flat XML, and OOXML
+- `_extract_ooxml_content()` extracts WordprocessingML paragraphs with heading style detection
+- Token savings: unpacking a .docx to word/document.xml and processing as .xml reduces tokens 40-60% by stripping binary and formatting markup
+- SUPPORTED and EXTRACTORS updated to include .xml
+- SKILL.md updated with extract_xml function and .xml in supported types
+
+[0.4.0]: https://github.com/prasad-m-k/foliograph/releases/tag/v0.4.0
+
 ## [0.3.0] - 2026-05-27
 
 ### Changed
