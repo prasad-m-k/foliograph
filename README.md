@@ -47,6 +47,11 @@ Show me an executive dashboard
 
 ---
 
+## Demo
+
+See Foliograph in action: [Watch the Demo Video](https://youtu.be/znLqYoU8hWo)
+
+
 ## The Problem
 
 Every new LLM session on a large document project starts blind. You paste the whole chapter, the whole spec, the whole report, because you don't know what the model will need. By message three you've burned most of your context window on content the model never touched.
