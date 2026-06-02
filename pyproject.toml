@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "foliograph"
-version = "0.4.0"
+version = "0.5.0"
 description = "Pre-compile office documents into compact knowledge graphs for LLM sessions"
 readme = "README.md"
 license = "MIT"
@@ -24,12 +24,14 @@ dependencies = []
 docx = ["python-docx>=1.1"]
 pdf  = ["pdfminer.six>=20221105"]
 pptx = ["python-pptx>=0.6.23"]
-all  = ["python-docx>=1.1", "pdfminer.six>=20221105", "python-pptx>=0.6.23"]
+xlsx = ["openpyxl>=3.1"]
+all  = ["python-docx>=1.1", "pdfminer.six>=20221105", "python-pptx>=0.6.23", "openpyxl>=3.1"]
 dev  = [
     "pytest>=7",
     "python-docx>=1.1",
     "pdfminer.six>=20221105",
     "python-pptx>=0.6.23",
+    "openpyxl>=3.1",
 ]
 
 [project.scripts]

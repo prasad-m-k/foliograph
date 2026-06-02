@@ -2,7 +2,7 @@
 foliograph.extractor
 ~~~~~~~~~~~~~~~~~~~~
 Extract structured content from office documents.
-Supports: .docx, .pdf, .pptx, .md, .txt, .xml
+Supports: .docx, .pdf, .pptx, .xlsx, .md, .txt, .xml
 """
 
 from __future__ import annotations
@@ -290,6 +290,77 @@ def _extract_md_txt_from_string(
 
 
 
+def _extract_xlsx(path: Path) -> DocumentRecord:
+    try:
+        import openpyxl
+    except ImportError:
+        raise ImportError(
+            "openpyxl is required for .xlsx support. "
+            "Install with: pip install 'foliograph[xlsx]'"
+        )
+
+    wb = openpyxl.load_workbook(str(path), read_only=True, data_only=True)
+    sections: list[Section] = []
+    tables: list[str] = []
+    all_text_parts: list[str] = []
+
+    for sheet_name in wb.sheetnames:
+        ws = wb[sheet_name]
+
+        rows: list[list[str]] = []
+        for row in ws.iter_rows(values_only=True):
+            cells = [
+                str(c).strip()
+                for c in row
+                if c is not None and str(c).strip() not in ("", "None")
+            ]
+            if cells:
+                rows.append(cells)
+
+        if not rows:
+            continue
+
+        headers = rows[0]
+        tables.append((f"{sheet_name}: " + " | ".join(headers[:10]))[:120])
+
+        sheet_text = " ".join(cell for row in rows for cell in row)
+        all_text_parts.append(sheet_text)
+
+        col_count = max(len(r) for r in rows)
+        summary = (
+            _first_sentence(sheet_text)
+            or f"{len(rows)} rows × {col_count} columns; headers: {', '.join(headers[:5])}"
+        )
+
+        sections.append(Section(
+            level=1,
+            title=sheet_name,
+            summary=summary,
+            word_count=_count_words(sheet_text),
+            page_hint=f"sheet: {sheet_name}",
+        ))
+
+    wb.close()
+
+    raw = " ".join(all_text_parts)
+    title = path.stem.replace("_", " ").replace("-", " ").title()
+
+    return DocumentRecord(
+        path=path,
+        file_type="xlsx",
+        title=title,
+        total_words=_count_words(raw),
+        total_pages=None,
+        sections=sections or [
+            Section(level=0, title="(empty workbook)", summary="", word_count=0)
+        ],
+        tables=tables[:30],
+        figures=[],
+        named_entities=_extract_named_entities(raw),
+        raw_text=raw,
+    )
+
+
 def _extract_xml(path: Path) -> DocumentRecord:
     """
     Extract structured content from an XML file.
@@ -568,12 +639,13 @@ def _extract_ooxml_content(path: Path, raw_text: str) -> DocumentRecord:
 # Public API
 # ---------------------------------------------------------------------------
 
-SUPPORTED = {".docx", ".pdf", ".pptx", ".md", ".txt", ".xml"}
+SUPPORTED = {".docx", ".pdf", ".pptx", ".xlsx", ".md", ".txt", ".xml"}
 
 EXTRACTORS = {
     ".docx": _extract_docx,
     ".pdf":  _extract_pdf,
     ".pptx": _extract_pptx,
+    ".xlsx": _extract_xlsx,
     ".md":   _extract_md_txt,
     ".txt":  _extract_md_txt,
     ".xml":  _extract_xml,

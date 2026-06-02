@@ -103,8 +103,8 @@ class TestNamedEntityExtraction:
 
 class TestExtractPublicApi:
     def test_unsupported_type_raises(self, tmp_path):
-        p = tmp_path / "file.xlsx"
-        p.write_text("data")
+        p = tmp_path / "file.csv"
+        p.write_text("a,b,c")
         with pytest.raises(ValueError, match="Unsupported"):
             extract(p)
 
@@ -181,6 +181,58 @@ class TestBuilder:
     def test_empty_sources_raises(self, tmp_path):
         with pytest.raises(ValueError):
             build(sources=[], output_dir=tmp_path)
+
+
+class TestXlsxExtractor:
+    pytest.importorskip("openpyxl")
+
+    def _make_workbook(self, tmp_path, sheets: dict) -> Path:
+        import openpyxl
+        wb = openpyxl.Workbook()
+        first = True
+        for sheet_name, rows in sheets.items():
+            ws = wb.active if first else wb.create_sheet(sheet_name)
+            if first:
+                ws.title = sheet_name
+                first = False
+            for row in rows:
+                ws.append(row)
+        p = tmp_path / "test.xlsx"
+        wb.save(str(p))
+        return p
+
+    def test_sheets_become_sections(self, tmp_path):
+        p = self._make_workbook(tmp_path, {
+            "Revenue": [["Region", "Q1", "Q2"], ["North", 100, 200], ["South", 150, 250]],
+            "Costs":   [["Category", "Amount"], ["Salaries", 500], ["Rent", 200]],
+        })
+        rec = extract(p)
+        titles = [s.title for s in rec.sections]
+        assert "Revenue" in titles
+        assert "Costs" in titles
+
+    def test_headers_registered_as_tables(self, tmp_path):
+        p = self._make_workbook(tmp_path, {
+            "Data": [["Name", "Value", "Date"], ["Alpha", 1, "2024-01"], ["Beta", 2, "2024-02"]],
+        })
+        rec = extract(p)
+        assert any("Name" in t for t in rec.tables)
+
+    def test_word_count_positive(self, tmp_path):
+        p = self._make_workbook(tmp_path, {
+            "Sheet1": [["Header"], ["Some text content here"]],
+        })
+        rec = extract(p)
+        assert rec.total_words > 0
+
+    def test_file_type(self, tmp_path):
+        p = self._make_workbook(tmp_path, {"Sheet1": [["A", "B"]]})
+        rec = extract(p)
+        assert rec.file_type == "xlsx"
+
+    def test_xlsx_in_supported(self):
+        from foliograph.extractor import SUPPORTED
+        assert ".xlsx" in SUPPORTED
 
 
 class TestXmlExtractor:

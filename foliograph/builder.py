@@ -319,7 +319,7 @@ model structural context at zero manual cost.
 
 ## Supported file types
 
-.docx  .pdf  .pptx  .md  .txt
+.docx  .pdf  .pptx  .xlsx  .md  .txt
 
 ## Full CLI reference
 

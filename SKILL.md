@@ -1,7 +1,7 @@
 ---
 name: foliograph
 description: >
-  Use this skill when the user uploads documents (.docx, .pdf, .pptx, .md, .txt)
+  Use this skill when the user uploads documents (.docx, .pdf, .pptx, .xlsx, .md, .txt)
   and wants to work with them efficiently, or says any of: "foliograph this",
   "build the graph", "map this document", "index this", "reduce my token cost",
   "split my document", "save my session summary", "check for drift",
@@ -90,7 +90,7 @@ Users do NOT need to configure Project instructions separately.
 import subprocess, sys, os, re, json, math
 from datetime import datetime, timezone
 
-for pkg in ["python-docx", "python-pptx", "pdfminer.six"]:
+for pkg in ["python-docx", "python-pptx", "pdfminer.six", "openpyxl"]:
     subprocess.run(
         [sys.executable, "-m", "pip", "install", pkg,
          "--break-system-packages", "-q"],
@@ -240,8 +240,38 @@ def extract_xml(path):
                 "page_hint": None}],
             "tables": [], "figures": [], "raw_text": raw_out}
 
+def extract_xlsx(path):
+    import openpyxl
+    wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    secs, tables, all_text = [], [], []
+    for name in wb.sheetnames:
+        ws = wb[name]
+        rows = []
+        for row in ws.iter_rows(values_only=True):
+            cells = [str(c).strip() for c in row
+                     if c is not None and str(c).strip() not in ("", "None")]
+            if cells:
+                rows.append(cells)
+        if not rows:
+            continue
+        headers = rows[0]
+        tables.append((f"{name}: " + " | ".join(headers[:10]))[:120])
+        sheet_text = " ".join(c for r in rows for c in r)
+        all_text.append(sheet_text)
+        first = re.split(r"[.!?]", sheet_text)[0][:160] if sheet_text else ""
+        secs.append(_sec(1, name, first or
+                         f"{len(rows)} rows × {max(len(r) for r in rows)} cols",
+                         f"sheet: {name}"))
+    wb.close()
+    raw = " ".join(all_text)
+    return _rec(path, "XLSX",
+                os.path.splitext(os.path.basename(path))[0].replace("_", " ").title(),
+                len(raw.split()), None, secs or
+                [_sec(0, "(empty workbook)", "")], tables, raw)
+
 EXTRACTORS = {".docx": extract_docx, ".pptx": extract_pptx,
-              ".pdf": extract_pdf, ".md": extract_md, ".txt": extract_md,
+              ".pdf": extract_pdf, ".xlsx": extract_xlsx,
+              ".md": extract_md, ".txt": extract_md,
               ".xml": extract_xml}
 
 def extract_entities(text):

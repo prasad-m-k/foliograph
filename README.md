@@ -100,6 +100,7 @@ pip install foliograph
 pip install "foliograph[docx]"
 pip install "foliograph[pdf]"
 pip install "foliograph[pptx]"
+pip install "foliograph[xlsx]"
 pip install "foliograph[all]"
 ```
 
@@ -171,6 +172,7 @@ for section in rec.sections:
 | Word Document | `.docx` | `extract-text` / `python-docx` |
 | PDF | `.pdf` | `pdftotext` / `pdfminer.six` |
 | PowerPoint | `.pptx` | `extract-text` / `python-pptx` |
+| Excel Workbook | `.xlsx` | `openpyxl` |
 | Markdown | `.md` | Native parser |
 | Plain Text | `.txt` | Native parser |
 
