@@ -65,7 +65,7 @@ Without Foliograph:
   Next session  -> paste Chapter 4 again (8,000 tokens) -> ...
 
 With Foliograph:
-  Session start -> load FOLIO_GRAPH.md (~400 tokens) -> "load Chapter 4 § The Swarm Model"
+  Session start -> load FOLIO_GRAPH.md (~400 tokens) -> "load Chapter 4 > The Swarm Model"
                -> fetch only that section (~600 tokens) -> done
 ```
 
@@ -121,7 +121,7 @@ foliograph build ./manuscript/ --output ./graph/ --name "My Book"
 foliograph check --graph FOLIO_GRAPH.md
 
 # Fetch a specific section to stdout
-foliograph fetch "chapter4.docx § The Swarm Model"
+foliograph fetch "chapter4.docx > The Swarm Model"
 
 # Token savings stats
 foliograph stats FOLIO_GRAPH.md
@@ -159,7 +159,7 @@ for section in rec.sections:
 
 1. **Start every session** by pasting the content of `FOLIO_SESSION.md`
 2. **Ask questions by concept:** "What does the book say about Channel Siloing?"
-3. **Load sections on demand:** "Load escalation_intelligence.md § The Swarm Model"
+3. **Load sections on demand:** "Load escalation_intelligence.md > The Swarm Model"
 4. **Never reload** a section you've already discussed in the session
 
 ---
@@ -201,8 +201,8 @@ for section in rec.sections:
 ```markdown
 ### S
 
-- **Sentiment Drift** -> `chapter2.docx § Signal 1: Sentiment Drift`
-- **Swarm Model** -> `chapter4.docx § The Swarm Model`
+- **Sentiment Drift** -> `chapter2.docx > Signal 1: Sentiment Drift`
+- **Swarm Model** -> `chapter4.docx > The Swarm Model`
 ```
 
 ---

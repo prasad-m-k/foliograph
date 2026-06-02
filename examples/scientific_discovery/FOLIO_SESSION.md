@@ -16,7 +16,7 @@ Graph files available:
 Rules for this session:
 1. Read FOLIO_GRAPH.md first for orientation (do not load source files yet).
 2. Use FOLIO_INDEX.md to locate any concept before loading a full section.
-3. Load sections on demand only: "Load [filename] § [Section Title]"
+3. Load sections on demand only: "Load [filename] > [Section Title]"
    Do not load entire source files unless explicitly asked.
 4. Never re-read a section you have already processed this session.
 5. If FOLIO_GRAPH.md shows a drift WARNING, note it before answering

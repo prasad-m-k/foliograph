@@ -97,7 +97,7 @@ def _build_index(records: list[DocumentRecord]) -> list[tuple[str, str, str]]:
             if key in seen:
                 continue
             seen.add(key)
-            loc = sec.page_hint or f"§ {sec.title}"
+            loc = sec.page_hint or f"> {sec.title}"
             entries.append((sec.title, fname, loc))
 
         for ent in rec.named_entities:
@@ -108,7 +108,7 @@ def _build_index(records: list[DocumentRecord]) -> list[tuple[str, str, str]]:
             location = fname
             for sec in rec.sections:
                 if ent.lower() in sec.summary.lower() or ent.lower() in sec.title.lower():
-                    location = f"{fname} § {sec.title}"
+                    location = f"{fname} > {sec.title}"
                     break
             entries.append((ent, fname, location))
 
@@ -159,7 +159,7 @@ Graph files available:
 Rules for this session:
 1. Read FOLIO_GRAPH.md first for orientation (do not load source files yet).
 2. Use FOLIO_INDEX.md to locate any concept before loading a full section.
-3. Load sections on demand only: "Load [filename] § [Section Title]"
+3. Load sections on demand only: "Load [filename] > [Section Title]"
    Do not load entire source files unless explicitly asked.
 4. Never re-read a section you have already processed this session.
 5. If FOLIO_GRAPH.md shows a drift WARNING, note it before answering
@@ -184,7 +184,7 @@ This project uses Foliograph for token-efficient document navigation.
 
 1. Read `FOLIO_GRAPH.md` for the structural map of all documents.
 2. Use `FOLIO_INDEX.md` to locate concepts before loading source files.
-3. Load sections on demand: respond to "Load [file] § [Section]" by reading
+3. Load sections on demand: respond to "Load [file] > [Section]" by reading
    only that section from the source document.
 4. Run `foliograph check` before any session where you plan to edit source
    documents, to verify the graph is current.
@@ -197,7 +197,7 @@ This project uses Foliograph for token-efficient document navigation.
 
 - Rebuild graph:  `foliograph build {source_args} -o {output_dir}`
 - Check for drift: `foliograph check --graph {graph_path}`
-- Fetch a section: `foliograph fetch "[file] § [Section Title]"`
+- Fetch a section: `foliograph fetch "[file] > [Section Title]"`
 """
 
 CLAUDE_CODE_HOOK_TEMPLATE = """\
@@ -306,7 +306,7 @@ Returns a drift report. If drift is detected, suggests running `/foliograph buil
 Fetches the full text of a specific section from a source document.
 
 ```bash
-foliograph fetch "chapter4.docx § The Swarm Model"
+foliograph fetch "chapter4.docx > The Swarm Model"
 ```
 
 Prints only that section to stdout, not the whole document.
@@ -327,7 +327,7 @@ model structural context at zero manual cost.
 foliograph build  <sources...> [-o DIR] [-n NAME] [--no-session]
 foliograph check  [--graph FOLIO_GRAPH.md] [-v]
 foliograph stats  <FOLIO_GRAPH.md>
-foliograph fetch  "<file> § <Section Title>"
+foliograph fetch  "<file> > <Section Title>"
 ```
 """
 
@@ -468,8 +468,8 @@ def build(
         f"**Entries:** {len(entries)}  ",
         "",
         "> Locate any concept, term, or section across all documents.",
-        '> Format: **Concept** → `file.ext § Section Title`',
-        "> To load: ask your LLM 'Load [file] § [Section]'",
+        '> Format: **Concept** → `file.ext > Section Title`',
+        "> To load: ask your LLM 'Load [file] > [Section]'",
         "",
         "---",
         "",
