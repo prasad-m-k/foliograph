@@ -7,13 +7,12 @@ name = "foliograph"
 version = "0.4.0"
 description = "Pre-compile office documents into compact knowledge graphs for LLM sessions"
 readme = "README.md"
-license = { text = "MIT" }
+license = "MIT"
 requires-python = ">=3.9"
 keywords = ["llm", "rag", "documents", "knowledge-graph", "token-optimization"]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
     "Topic :: Text Processing :: Markup",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -44,3 +43,4 @@ Issues     = "https://github.com/prasad-m-k/foliograph/issues"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["foliograph*"]
+
