@@ -24,12 +24,14 @@ dependencies = []
 docx = ["python-docx>=1.1"]
 pdf  = ["pdfminer.six>=20221105"]
 pptx = ["python-pptx>=0.6.23"]
-all  = ["python-docx>=1.1", "pdfminer.six>=20221105", "python-pptx>=0.6.23"]
+xlsx = ["openpyxl>=3.1"]
+all  = ["python-docx>=1.1", "pdfminer.six>=20221105", "python-pptx>=0.6.23", "openpyxl>=3.1"]
 dev  = [
     "pytest>=7",
     "python-docx>=1.1",
     "pdfminer.six>=20221105",
     "python-pptx>=0.6.23",
+    "openpyxl>=3.1",
 ]
 
 [project.scripts]
