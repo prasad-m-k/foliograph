@@ -58,27 +58,27 @@ Format: `[KIND] source → target: reason`
 
 ### Sequence (natural reading order)
 
-- `ScientificDiscovery.pptx` § *Slide 1* → `ScientificDiscovery.pptx` § *Slide 2*
+- `ScientificDiscovery.pptx` > *Slide 1* → `ScientificDiscovery.pptx` > *Slide 2*
   _Slide sequence: Slide 1 -> Slide 2_
-- `ScientificDiscovery.pptx` § *Slide 2* → `ScientificDiscovery.pptx` § *Slide 3*
+- `ScientificDiscovery.pptx` > *Slide 2* → `ScientificDiscovery.pptx` > *Slide 3*
   _Slide sequence: Slide 2 -> Slide 3_
-- `ScientificDiscovery.pptx` § *Slide 3* → `ScientificDiscovery.pptx` § *Slide 4*
+- `ScientificDiscovery.pptx` > *Slide 3* → `ScientificDiscovery.pptx` > *Slide 4*
   _Slide sequence: Slide 3 -> Slide 4_
-- `ScientificDiscovery.pptx` § *Slide 4* → `ScientificDiscovery.pptx` § *Slide 5*
+- `ScientificDiscovery.pptx` > *Slide 4* → `ScientificDiscovery.pptx` > *Slide 5*
   _Slide sequence: Slide 4 -> Slide 5_
-- `ScientificDiscovery.pptx` § *Slide 5* → `ScientificDiscovery.pptx` § *Slide 6*
+- `ScientificDiscovery.pptx` > *Slide 5* → `ScientificDiscovery.pptx` > *Slide 6*
   _Slide sequence: Slide 5 -> Slide 6_
-- `ScientificDiscovery.pptx` § *Slide 6* → `ScientificDiscovery.pptx` § *Slide 7*
+- `ScientificDiscovery.pptx` > *Slide 6* → `ScientificDiscovery.pptx` > *Slide 7*
   _Slide sequence: Slide 6 -> Slide 7_
-- `ScientificDiscovery.pptx` § *Slide 7* → `ScientificDiscovery.pptx` § *Slide 8*
+- `ScientificDiscovery.pptx` > *Slide 7* → `ScientificDiscovery.pptx` > *Slide 8*
   _Slide sequence: Slide 7 -> Slide 8_
-- `ScientificDiscovery.pptx` § *Slide 8* → `ScientificDiscovery.pptx` § *Slide 9*
+- `ScientificDiscovery.pptx` > *Slide 8* → `ScientificDiscovery.pptx` > *Slide 9*
   _Slide sequence: Slide 8 -> Slide 9_
-- `ScientificDiscovery.pptx` § *Slide 9* → `ScientificDiscovery.pptx` § *Slide 10*
+- `ScientificDiscovery.pptx` > *Slide 9* → `ScientificDiscovery.pptx` > *Slide 10*
   _Slide sequence: Slide 9 -> Slide 10_
-- `ScientificDiscovery.pptx` § *Slide 10* → `ScientificDiscovery.pptx` § *Slide 11*
+- `ScientificDiscovery.pptx` > *Slide 10* → `ScientificDiscovery.pptx` > *Slide 11*
   _Slide sequence: Slide 10 -> Slide 11_
-- `ScientificDiscovery.pptx` § *Slide 11* → `ScientificDiscovery.pptx` § *Slide 12*
+- `ScientificDiscovery.pptx` > *Slide 11* → `ScientificDiscovery.pptx` > *Slide 12*
   _Slide sequence: Slide 11 -> Slide 12_
-- `ScientificDiscovery.pptx` § *Slide 12* → `ScientificDiscovery.pptx` § *Slide 13*
+- `ScientificDiscovery.pptx` > *Slide 12* → `ScientificDiscovery.pptx` > *Slide 13*
   _Slide sequence: Slide 12 -> Slide 13_
