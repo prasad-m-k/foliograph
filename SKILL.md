@@ -5,7 +5,7 @@ description: >
   and wants to work with them efficiently, or says any of: "foliograph this",
   "build the graph", "map this document", "index this", "reduce my token cost",
   "split my document", "save my session summary", "check for drift",
-  "load [file] § [section]", "show me a dashboard", "executive report",
+  "load [file] > [section]", "show me a dashboard", "executive report",
   "html report", "cumulative savings", or "what commands can I use".
   Designed for ALL users including executives and non-technical professionals.
   Default output is FOLIO_TIPS.md only. HTML dashboard is generated only when
@@ -72,7 +72,7 @@ Users do NOT need to configure Project instructions separately.
 ## Built-in navigation rules (always active)
 
 - Check the internal index before loading any source file
-- Load sections on demand only: "Load [file] § [Section Title]"
+- Load sections on demand only: "Load [file] > [Section Title]"
 - Never re-read a section already discussed this session
 - When user says "save my session summary": write a 150-200 word note
   covering decisions made and next steps, present as a download
@@ -443,8 +443,8 @@ def build_internal_graph(records, project_name):
                 continue
             lines += [f"### {label}", ""]
             for r in by_kind[kind]:
-                src = f"`{r['source_file']}`" + (f" § *{r.get('source_section','')}*" if r.get("source_section") else "")
-                tgt = f"`{r['target_file']}`" + (f" § *{r.get('target_section','')}*" if r.get("target_section") else "")
+                src = f"`{r['source_file']}`" + (f" > *{r.get('source_section','')}*" if r.get("source_section") else "")
+                tgt = f"`{r['target_file']}`" + (f" > *{r.get('target_section','')}*" if r.get("target_section") else "")
                 conf = r.get("confidence", "EXTRACTED")
                 lines.append(f"- {src} → {tgt}  `[{conf}]`")
                 lines.append(f"  _{r['label']}_")
@@ -463,7 +463,7 @@ def build_internal_graph(records, project_name):
             if key in seen:
                 continue
             seen.add(key)
-            loc = sec.get("page_hint") or f"§ {sec['title']}"
+            loc = sec.get("page_hint") or f"> {sec['title']}"
             entries.append((sec["title"], rec["filename"], loc))
         for ent in extract_entities(rec["raw_text"]):
             key = ent.lower()
@@ -473,7 +473,7 @@ def build_internal_graph(records, project_name):
             location = rec["filename"]
             for sec in rec["sections"]:
                 if ent.lower() in sec["title"].lower() or ent.lower() in sec["summary"].lower():
-                    location = f"{rec['filename']} § {sec['title']}"
+                    location = f"{rec['filename']} > {sec['title']}"
                     break
             entries.append((ent, rec["filename"], location))
     entries.sort(key=lambda x: x[0].lower())
@@ -494,7 +494,7 @@ def build_tips_md(records, project_name, total_words, analysis):
     file_list    = "\n".join(f"  - {r['filename']}" for r in records)
 
     load_cmds = "\n".join(
-        f"  Load {r['filename']} § {s['title']}"
+        f"  Load {r['filename']} > {s['title']}"
         for r in records
         for s in r["sections"]
         if s["level"] == 1 and s["title"]
@@ -616,7 +616,7 @@ Content to include:
 
 No emojis anywhere. Use solid diamond (filled triangle right) as nav markers.
 Navy header with orange bottom border. Playfair Display for logo mark.
-Click any section row or search result to copy the "Load file § Section" command.
+Click any section row or search result to copy the "Load file > Section" command.
 Toast notification on copy. Animated orange pulse dot in header.
 
 Inject the actual data: document list, section tree, index entries, token numbers,

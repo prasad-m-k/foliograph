@@ -50,7 +50,7 @@ Returns a drift report. If drift is detected, suggests running `/foliograph buil
 Fetches the full text of a specific section from a source document.
 
 ```bash
-foliograph fetch "chapter4.docx § The Swarm Model"
+foliograph fetch "chapter4.docx > The Swarm Model"
 ```
 
 Prints only that section to stdout, not the whole document.
@@ -71,5 +71,5 @@ model structural context at zero manual cost.
 foliograph build  <sources...> [-o DIR] [-n NAME] [--no-session]
 foliograph check  [--graph FOLIO_GRAPH.md] [-v]
 foliograph stats  <FOLIO_GRAPH.md>
-foliograph fetch  "<file> § <Section Title>"
+foliograph fetch  "<file> > <Section Title>"
 ```

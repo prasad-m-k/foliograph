@@ -93,17 +93,17 @@ def cmd_fetch(args: argparse.Namespace) -> int:
     Fetch and print the full text of a specific section from a source document.
 
     Usage:
-      foliograph fetch "chapter4.docx § The Swarm Model"
+      foliograph fetch "chapter4.docx > The Swarm Model"
       foliograph fetch chapter4.docx --section "The Swarm Model"
     """
     from .extractor import extract
 
-    # Parse "file § Section" syntax or separate args
+    # Parse "file > Section" syntax or separate args
     ref = args.ref
     section_title: str | None = args.section or None
 
-    if "§" in ref:
-        parts = ref.split("§", 1)
+    if ">" in ref:
+        parts = ref.split(">", 1)
         file_arg = parts[0].strip()
         section_title = parts[1].strip()
     else:
@@ -339,13 +339,13 @@ def main(argv: list[str] | None = None) -> int:
         "ref", metavar="REF",
         help=(
             'File and optional section. Examples:\n'
-            '  "report.docx § Executive Summary"\n'
+            '  "report.docx > Executive Summary"\n'
             '  report.docx  (lists all sections)'
         ),
     )
     p_fetch.add_argument(
         "--section", metavar="TITLE",
-        help="Section title (alternative to § syntax)",
+        help="Section title (alternative to > syntax)",
     )
     p_fetch.add_argument(
         "--sources", nargs="*", metavar="DIR",

@@ -5,16 +5,16 @@
 **Entries:** 20  
 
 > Locate any concept, term, or section across all documents.
-> Format: **Concept** → `file.ext § Section Title`
-> To load: ask your LLM 'Load [file] § [Section]'
+> Format: **Concept** → `file.ext > Section Title`
+> To load: ask your LLM 'Load [file] > [Section]'
 
 ---
 
 
 ### A
 
-- **Adatum Corporation** → `ScientificDiscovery.pptx § Slide 12`
-- **Aidyn Zhanbolat** → `ScientificDiscovery.pptx § Slide 1`
+- **Adatum Corporation** → `ScientificDiscovery.pptx > Slide 12`
+- **Aidyn Zhanbolat** → `ScientificDiscovery.pptx > Slide 1`
 
 ### F
 
@@ -22,7 +22,7 @@
 
 ### G
 
-- **Growth Strategy Summary** → `ScientificDiscovery.pptx § Slide 2`
+- **Growth Strategy Summary** → `ScientificDiscovery.pptx > Slide 2`
 
 ### M
 

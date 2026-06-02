@@ -281,8 +281,8 @@ def render_relationships_block(graph: RelationshipGraph) -> list[str]:
         lines.append(f"### {label}")
         lines.append("")
         for r in rels:
-            src = f"`{r.source_file}`" + (f" § *{r.source_section}*" if r.source_section else "")
-            tgt = f"`{r.target_file}`" + (f" § *{r.target_section}*" if r.target_section else "")
+            src = f"`{r.source_file}`" + (f" > *{r.source_section}*" if r.source_section else "")
+            tgt = f"`{r.target_file}`" + (f" > *{r.target_section}*" if r.target_section else "")
             lines.append(f"- {src} → {tgt}")
             lines.append(f"  _{r.label}_")
         lines.append("")
